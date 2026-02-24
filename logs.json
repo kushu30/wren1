@@ -1,0 +1,114 @@
+[
+  {
+    "module": "input",
+    "risk": "medium",
+    "reason": "PII detected: ['email', 'credit_card']",
+    "action": "redacted",
+    "timestamp": "2026-02-24T06:30:50.929554"
+  },
+  {
+    "module": "input",
+    "risk": "medium",
+    "reason": "PII detected: ['email', 'credit_card']",
+    "action": "redacted",
+    "timestamp": "2026-02-24T06:31:03.346099"
+  },
+  {
+    "module": "input",
+    "risk": "medium",
+    "reason": "PII detected: ['email', 'credit_card']",
+    "action": "redacted",
+    "timestamp": "2026-02-24T06:31:38.597173"
+  },
+  {
+    "module": "input",
+    "risk": "medium",
+    "reason": "PII detected: ['email', 'credit_card']",
+    "action": "redacted",
+    "timestamp": "2026-02-24T06:34:01.785372"
+  },
+  {
+    "module": "output",
+    "risk": "high",
+    "reason": "Sensitive data leaked: ['api_key']",
+    "action": "redacted",
+    "timestamp": "2026-02-24T06:38:00.241928"
+  },
+  {
+    "module": "input",
+    "risk": "high",
+    "reason": "Detected injection pattern: 'ignore previous instructions'",
+    "action": "blocked",
+    "timestamp": "2026-02-24T06:42:16.306887"
+  },
+  {
+    "module": "input",
+    "risk": "medium",
+    "reason": "PII detected: ['email', 'credit_card']",
+    "action": "redacted",
+    "timestamp": "2026-02-24T06:42:28.318432"
+  },
+  {
+    "module": "output",
+    "risk": "high",
+    "reason": "Sensitive data leaked: ['api_key']",
+    "action": "redacted",
+    "timestamp": "2026-02-24T06:42:34.141937"
+  },
+  {
+    "module": "tool",
+    "risk": "high",
+    "reason": "Unauthorized tool call attempted: delete_record",
+    "action": "blocked",
+    "timestamp": "2026-02-24T06:42:41.305423"
+  },
+  {
+    "module": "input",
+    "risk": "medium",
+    "reason": "PII detected: ['email', 'credit_card']",
+    "action": "redacted",
+    "timestamp": "2026-02-24T06:46:44.970297"
+  },
+  {
+    "module": "tool",
+    "risk": "high",
+    "reason": "Unauthorized tool call attempted: delete_record",
+    "action": "blocked",
+    "timestamp": "2026-02-24T06:47:04.864949"
+  },
+  {
+    "module": "tool",
+    "risk": "high",
+    "reason": "Unauthorized tool call attempted: delete_record",
+    "action": "blocked",
+    "timestamp": "2026-02-24T06:47:17.462710"
+  },
+  {
+    "module": "tool",
+    "risk": "low",
+    "reason": "Allowed tool call: delete_record",
+    "action": "allowed",
+    "timestamp": "2026-02-24T06:52:56.989760"
+  },
+  {
+    "module": "tool",
+    "risk": "high",
+    "reason": "Unauthorized tool call attempted: delete_record",
+    "action": "blocked",
+    "timestamp": "2026-02-24T06:53:48.099414"
+  },
+  {
+    "module": "rag",
+    "risk": "low",
+    "reason": "Document chunk verified",
+    "action": "allowed",
+    "timestamp": "2026-02-24T07:24:04.112421"
+  },
+  {
+    "module": "rag",
+    "risk": "high",
+    "reason": "Untrusted document chunk detected",
+    "action": "blocked",
+    "timestamp": "2026-02-24T07:24:13.773105"
+  }
+]

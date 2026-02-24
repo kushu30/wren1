@@ -1,0 +1,18 @@
+input:
+  redact_pii: true
+  block_on_injection: false
+
+output:
+  redact_pii: true
+  block_credentials: true
+
+tools:
+  allowed:
+    - get_user_info
+    - search
+
+  blocked:
+    - delete_record
+
+logging:
+  enabled: true
