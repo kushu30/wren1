@@ -1,24 +1,20 @@
-import json
-from datetime import datetime
-from pathlib import Path
+from app.database import SessionLocal
+from app.models.event import Event
 
-BASE_DIR = Path(__file__).resolve().parent.parent.parent
-LOG_FILE = BASE_DIR / "logs.json"
+def log_event(data: dict):
+    db = SessionLocal()
 
-def log_event(event: dict):
-    event["timestamp"] = datetime.utcnow().isoformat()
+    event = Event(
+        tenant_id=data.get("tenant_id", "default"),
+        module=data.get("module"),
+        severity=data.get("risk"),
+        action=data.get("action"),
+        reason=data.get("reason"),
+        session_id=data.get("session_id"),
+        request_hash=data.get("request_hash"),
+        ip_address=data.get("ip_address"),
+    )
 
-    if not LOG_FILE.exists() or LOG_FILE.stat().st_size == 0:
-        with open(LOG_FILE, "w") as f:
-            json.dump([], f)
-
-    with open(LOG_FILE, "r+") as f:
-        try:
-            data = json.load(f)
-        except json.JSONDecodeError:
-            data = []
-
-        data.append(event)
-        f.seek(0)
-        json.dump(data, f, indent=2)
-        f.truncate()
+    db.add(event)
+    db.commit()
+    db.close()

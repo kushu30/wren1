@@ -1,5 +1,6 @@
 import httpx
 import json
+import hashlib
 from fastapi import Request, Response
 from fastapi.responses import JSONResponse
 from .config import OPENAI_API_KEY, OPENAI_BASE_URL, MOCK_MODE
@@ -8,19 +9,76 @@ from .scanners.input_scanner import scan_input
 from .scanners.output_scanner import scan_output
 from .policy_engine import policy_engine
 from .logger.audit_logger import log_event
+from .security.rate_limiter import check_rate_limit
+from .securitylayer.wren_scanner import scan as advanced_scan
 
 
 async def forward_request(request: Request):
     body = await request.json()
-    policy = policy_engine.get()
+    messages = body.get("messages", [])
 
+    for m in messages:
+        if m.get("role") == "user":
+            user_input = m.get("content", "")
+
+            decision = advanced_scan(user_input)
+
+            if decision.action == "BLOCK":
+                return JSONResponse(
+                    status_code=403,
+                    content={
+                        "error": "Blocked by Wren",
+                        "reason": decision.reason
+                    }
+                )
+
+            if decision.action == "REDACT":
+                m["content"] = decision.redacted_input
+    tenant_id = getattr(request.state, "tenant_id", "default")
     # -------- INPUT SCAN --------
     scan_result = scan_input(body)
     body = scan_result["modified_body"]
 
+    # Build a deterministic request hash from all user messages
+    combined_text = ""
+    for m in body.get("messages", []):
+        if m.get("role") == "user":
+            combined_text += m.get("content", "") + " "
+
+    request_hash = hashlib.sha256(
+        combined_text.encode()
+    ).hexdigest()
+
+    # Capture session and client IP
+    session_id = request.headers.get("X-Session-ID", "unknown")
+    ip_address = request.client.host
+
+    # Per-tenant rate limit (60 req/min). Block and log when exceeded.
+    if not check_rate_limit(tenant_id):
+        log_event({
+            "tenant_id": tenant_id,
+            "session_id": session_id,
+            "request_hash": request_hash,
+            "ip_address": ip_address,
+            "module": "rate_limit",
+            "risk": "high",
+            "action": "blocked",
+            "reason": "Rate limit exceeded"
+        })
+
+        return JSONResponse(
+            status_code=429,
+            content={"error": "Rate limit exceeded"}
+        )
+
+    policy = policy_engine.get()
     # Injection detection
     if scan_result["is_injection"]:
         log_event({
+            "tenant_id": tenant_id,
+            "session_id": session_id,
+            "request_hash": request_hash,
+            "ip_address": ip_address,
             "module": "input",
             "risk": "high",
             "reason": scan_result["reason"],
@@ -39,6 +97,10 @@ async def forward_request(request: Request):
     # PII redaction logging
     if scan_result["pii_found"]:
         log_event({
+            "tenant_id": tenant_id,
+            "session_id": session_id,
+            "request_hash": request_hash,
+            "ip_address": ip_address,
             "module": "input",
             "risk": "medium",
             "reason": f"PII detected: {scan_result['pii_found']}",
@@ -62,6 +124,10 @@ async def forward_request(request: Request):
 
             if not is_valid:
                 log_event({
+                    "tenant_id": tenant_id,
+                    "session_id": session_id,
+                    "request_hash": request_hash,
+                    "ip_address": ip_address,
                     "module": "rag",
                     "risk": "high",
                     "reason": reason,
@@ -77,6 +143,10 @@ async def forward_request(request: Request):
                 )
 
             log_event({
+                "tenant_id": tenant_id,
+                "session_id": session_id,
+                "request_hash": request_hash,
+                "ip_address": ip_address,
                 "module": "rag",
                 "risk": "low",
                 "reason": "Document chunk verified",
@@ -97,6 +167,10 @@ async def forward_request(request: Request):
 
                 if tool_name in blocked or tool_name not in allowed:
                     log_event({
+                        "tenant_id": tenant_id,
+                        "session_id": session_id,
+                        "request_hash": request_hash,
+                        "ip_address": ip_address,
                         "module": "tool",
                         "risk": "high",
                         "reason": f"Unauthorized tool call attempted: {tool_name}",
@@ -112,6 +186,10 @@ async def forward_request(request: Request):
                     )
 
             log_event({
+                "tenant_id": tenant_id,
+                "session_id": session_id,
+                "request_hash": request_hash,
+                "ip_address": ip_address,
                 "module": "tool",
                 "risk": "low",
                 "reason": f"Allowed tool call: {tool_name}",
@@ -124,6 +202,10 @@ async def forward_request(request: Request):
 
             if findings:
                 log_event({
+                    "tenant_id": tenant_id,
+                    "session_id": session_id,
+                    "request_hash": request_hash,
+                    "ip_address": ip_address,
                     "module": "output",
                     "risk": "high",
                     "reason": f"Sensitive data leaked: {findings}",

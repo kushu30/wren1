@@ -8,7 +8,10 @@ def load_policy():
         return yaml.safe_load(f)
 
 class PolicyEngine:
-    def get(self):
-        return load_policy()
+    def __init__(self):
+        self.policy = load_policy()
 
+    def get(self, tenant_id: str = None):
+        return self.policy
+        
 policy_engine = PolicyEngine()

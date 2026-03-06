@@ -39,7 +39,18 @@ def scan_input(body: dict):
     messages = body.get("messages", [])
     combined_text = ""
 
+    if not isinstance(messages, list):
+        return {
+            "is_injection": False,
+            "reason": "Invalid messages format",
+            "pii_found": [],
+            "modified_body": body
+        }
+
     for m in messages:
+        if not isinstance(m, dict):
+            continue
+
         if m.get("role") == "user":
             combined_text += m.get("content", "") + " "
 
@@ -47,11 +58,13 @@ def scan_input(body: dict):
 
     redacted_text, pii_found = redact_pii(combined_text)
 
-    # Update body messages if redaction occurred
     if pii_found:
         for m in messages:
+            if not isinstance(m, dict):
+                continue
+
             if m.get("role") == "user":
-                m["content"] = redact_pii(m["content"])[0]
+                m["content"] = redact_pii(m.get("content", ""))[0]
 
     return {
         "is_injection": is_injection,

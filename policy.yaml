@@ -1,6 +1,6 @@
 input:
   redact_pii: true
-  block_on_injection: false
+  block_on_injection: true
 
 output:
   redact_pii: true
