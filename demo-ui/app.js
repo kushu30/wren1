@@ -59,10 +59,10 @@ input.value=""
 }
 
 async function loadEvents(){
-
+try {
 const res = await fetch("http://localhost:8000/events", {
   headers: {
-    "X-Wren-Key": "a7f70353d1bbb8e07bb17ed70d8f7babbfce48db5370d21f"
+    "X-Wren-Key": API_KEY
   }
 });
 
