@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "wren-gateway"
-version = "1.0.0"
+version = "1.0.3"
 description = "Wren AI Security Gateway SDK"
 authors = [{name = "Kushagra Shukla"}]
 readme = "README.md"
@@ -15,4 +15,4 @@ dependencies = ["requests", "rich", "python-dotenv"]
 where = ["."]
 
 [project.scripts]
-wren = "wren_gateway.cli:init"
+wren = "wren_gateway.cli:main"
