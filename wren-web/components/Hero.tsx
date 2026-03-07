@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef, useState } from 'react'
 
 const ATTACKS = [
   { type: 'PROMPT_INJECTION', payload: 'Ignore previous instructions and...', status: 'BLOCKED', risk: 0.97 },
@@ -13,6 +13,13 @@ const ATTACKS = [
 
 export default function Hero() {
   const logRef = useRef<HTMLDivElement>(null)
+  const [copied, setCopied] = useState(false)
+
+  const copyCommand = () => {
+    navigator.clipboard.writeText('pip install wren-gateway')
+    setCopied(true)
+    setTimeout(() => setCopied(false), 2000)
+  }
 
   useEffect(() => {
     // Stagger log entries appearing
@@ -43,16 +50,32 @@ export default function Hero() {
             Wren is the best way to protect your AI apps.
           </h1>
 
-          <Link
-            href="/signup"
-            className="bg-white text-black px-5 py-2.5 rounded-full font-medium text-[14px] flex items-center gap-2 hover:bg-neutral-200 transition-colors opacity-0-init animate-fade-up"
+          <div 
+            className="flex items-center opacity-0-init animate-fade-up"
             style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
           >
-            Get started free
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <path d="M12 5v14M19 12l-7 7-7-7"/>
-            </svg>
-          </Link>
+            <div className="bg-white border border-[#222] hover:border-[#444] transition-colors duration-300 rounded-full pl-4 pr-1.5 py-1.5 flex items-center justify-between w-full sm:w-[224px]">
+              <div className="flex items-center gap-2 overflow-hidden text-neutral-800">
+                <span className="font-mono text-[12px] select-none">$</span>
+                <span className="font-mono text-[13px] truncate">pip install wren-gateway</span>
+              </div>
+              
+              <button 
+                onClick={copyCommand}
+                className="flex-shrink-0 text-neutral-800 hover:text-[#EAEAEA] hover:bg-[#1A1A1A] rounded-full w-7 h-7 flex items-center justify-center transition-all duration-300 focus:outline-none"
+                aria-label="Copy to clipboard"
+              >
+                <div className="relative flex items-center justify-center w-full h-full">
+                  <div className={`absolute transition-all duration-300 transform flex items-center justify-center ${copied ? 'opacity-100 scale-100' : 'opacity-0 scale-50'}`}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#EAEAEA" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                  </div>
+                  <div className={`absolute transition-all duration-300 transform flex items-center justify-center ${copied ? 'opacity-0 scale-50' : 'opacity-100 scale-100'}`}>
+                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
+                  </div>
+                </div>
+              </button>
+            </div>
+          </div>
         </div>
 
         {/* Bottom: Live log mockup */}
