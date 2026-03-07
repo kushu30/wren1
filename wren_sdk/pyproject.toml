@@ -9,7 +9,10 @@ description = "Wren AI Security Gateway SDK"
 authors = [{name = "Kushagra Shukla"}]
 readme = "README.md"
 requires-python = ">=3.8"
-dependencies = ["requests"]
+dependencies = ["requests", "rich", "python-dotenv"]
 
 [tool.setuptools.packages.find]
 where = ["."]
+
+[project.scripts]
+wren = "wren_gateway.cli:init"

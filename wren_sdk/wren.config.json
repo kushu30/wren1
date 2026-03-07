@@ -1,0 +1,5 @@
+{
+  "provider": "openai",
+  "model": "gpt-4o",
+  "wren_gateway": "http://localhost:8000"
+}

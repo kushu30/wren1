@@ -9,7 +9,12 @@ except Exception:
     pass
 
 
-print(r"""
+from rich.console import Console
+
+console = Console()
+
+if __name__ != "__main__":
+    console.print(r"""
 ############################################################
 #                                                          #
 #   ██╗    ██╗██████╗ ███████╗███╗   ██╗                   #
@@ -19,9 +24,8 @@ print(r"""
 #   ╚███╔███╔╝██║  ██║███████╗██║ ╚████║                   #
 #    ╚══╝╚══╝ ╚═╝  ╚═╝╚══════╝╚═╝  ╚═══╝                   #
 #                                                          #
-#            AI SECURITY GATEWAY SDK                       #
 #                                                          #
 #                Team Carrick_Ball                         #
 #                                                          #
 ############################################################
-""")
+""", style="bold orange1")
