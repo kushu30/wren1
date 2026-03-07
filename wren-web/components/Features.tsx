@@ -24,7 +24,7 @@ export default function Features() {
               <p className="text-[#8B8B8B] text-[14px] leading-relaxed mb-4 font-body">
                 Advanced pattern detection catches prompt injections before they reach your AI models. Protects against jailbreaks and tool abuse.
               </p>
-              <Link href="/core" className="text-[#FF6B2C] text-[14px] hover:text-[#FF8A50] transition-colors flex items-center gap-1.5 font-medium mb-6">
+              <Link href="/docs" className="text-[#FF6B2C] text-[14px] hover:text-[#FF8A50] transition-colors flex items-center gap-1.5 font-medium mb-6">
                 Explore core protection <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
               </Link>
             </div>
@@ -62,7 +62,7 @@ export default function Features() {
               <p className="text-[#8B8B8B] text-[14px] leading-relaxed mb-4 font-body">
                 Wren learns how your data flows, detecting and redacting sensitive PII instantly, no matter the structure.
               </p>
-              <Link href="/privacy" className="text-[#FF6B2C] text-[14px] hover:text-[#FF8A50] transition-colors flex items-center gap-1.5 font-medium mb-6">
+              <Link href="/docs" className="text-[#FF6B2C] text-[14px] hover:text-[#FF8A50] transition-colors flex items-center gap-1.5 font-medium mb-6">
                 Learn about data privacy <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
               </Link>
               
@@ -100,7 +100,7 @@ export default function Features() {
               <p className="text-[#8B8B8B] text-[14px] leading-relaxed mb-4 font-body">
                 Trusted by modern enterprises to accelerate development, securely and at scale. Monitor and act with confidence.
               </p>
-              <Link href="/enterprise" className="text-[#FF6B2C] text-[14px] hover:text-[#FF8A50] transition-colors flex items-center gap-1.5 font-medium mb-6">
+              <Link href="/docs" className="text-[#FF6B2C] text-[14px] hover:text-[#FF8A50] transition-colors flex items-center gap-1.5 font-medium mb-6">
                 Explore enterprise <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17l9.2-9.2M17 17V7H7"/></svg>
               </Link>
             </div>

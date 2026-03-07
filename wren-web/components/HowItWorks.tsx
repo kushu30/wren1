@@ -48,7 +48,7 @@ export default function HowItWorks() {
                 <div className="flex flex-1 overflow-hidden min-h-0">
                   
                   {/* Left Sidebar (Action Log / Steps) */}
-                  <div className="w-1/3 min-w-[200px] border-r border-[#ffffff08] bg-[#121212] p-4 flex flex-col gap-4 overflow-y-auto hidden md:flex">
+                  <div className="hidden md:flex flex-col w-1/3 min-w-[200px] border-r border-[#ffffff08] bg-[#121212] p-4 gap-4 overflow-y-auto">
                     <div className="flex flex-col text-sm">
                       <div className="text-white font-medium mb-2">Request Intercepted</div>
                       <div className="px-3 py-2 border border-[#ffffff15] rounded-md text-[#A3A3A3] text-xs leading-relaxed">

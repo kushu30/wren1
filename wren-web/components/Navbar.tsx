@@ -11,11 +11,11 @@ export default function Navbar() {
     <nav className="bg-[#14120B] fixed top-0 left-0 right-0 z-50">
       <div className="max-w-7xl mx-auto h-12 flex items-center justify-between">
         {/* Logo */}
-        <Link href="/" className="flex items-center gap-2.5 group">
-          <div className="w-7 h-7 relative">
+        <Link href="/" className="flex items-center gap-2.5 group cursor-pointer">
+          <div className="w-7 h-7 relative opacity-90 group-hover:opacity-100 transition-opacity">
             <Image src="/logo.png" alt="Logo" width={28} height={28} />
           </div>
-          <span className="font-display font-700 text-lg tracking-tight font-medium">
+          <span className="font-display font-medium text-lg tracking-tight text-[#EAEAEA] group-hover:text-white transition-colors">
             wren
           </span>
         </Link>
@@ -23,14 +23,14 @@ export default function Navbar() {
         {/* Desktop nav */}
         <div className="hidden md:flex items-center gap-8">
           {[
-            { label: 'How It Works', href: '#how-it-works' },
-            { label: 'Features', href: '#features' },
-            { label: 'Docs', href: '#docs' },
+            { label: 'How It Works', href: '/#how-it-works' },
+            { label: 'Features', href: '/#features' },
+            { label: 'Docs', href: '/docs' },
           ].map((item) => (
             <Link
               key={item.label}
               href={item.href}
-              className="text-sm text-white hover:text-white transition-colors text-medium font-body"
+              className="text-[13px] text-[#888] hover:text-[#EAEAEA] transition-colors font-body cursor-pointer"
             >
               {item.label}
             </Link>
@@ -41,13 +41,13 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-3">
           <Link
             href="/login"
-            className="rounded-full border border-neutral-500 text-sm px-3 py-0.5"
+            className="rounded-full border border-neutral-500 text-sm px-3 py-0.5 hover:bg-neutral-800/50 hover:text-white hover:border-neutral-400 transition-colors cursor-pointer text-neutral-300"
           >
             Sign in
           </Link>
           <Link
             href="/signup"
-            className="rounded-full border border-neutral-500 text-neutral-800 bg-neutral-50 text-sm px-3 py-0.5"
+            className="rounded-full border border-neutral-500 text-neutral-800 bg-neutral-50 text-sm px-3 py-0.5 hover:bg-neutral-200 transition-colors cursor-pointer"
           >
             Get started
           </Link>
@@ -71,19 +71,19 @@ export default function Navbar() {
 
       {/* Mobile menu */}
       {open && (
-        <div className="md:hidden border-t border-white/6 px-6 py-4 flex flex-col gap-4 bg-surface-900/95 backdrop-blur-lg">
+        <div className="md:hidden border-t border-[#222] px-6 py-4 flex flex-col gap-4 bg-[#14120B]/95 backdrop-blur-lg">
           {[
-            { label: 'How It Works', href: '#how-it-works' },
-            { label: 'Features', href: '#features' },
-            { label: 'Docs', href: '#docs' },
+            { label: 'How It Works', href: '/#how-it-works' },
+            { label: 'Features', href: '/#features' },
+            { label: 'Docs', href: '/docs' },
           ].map((item) => (
-            <Link key={item.label} href={item.href} className="text-sm text-white/70" onClick={() => setOpen(false)}>
+            <Link key={item.label} href={item.href} className="text-[14px] text-[#888] hover:text-[#EAEAEA] transition-colors cursor-pointer" onClick={() => setOpen(false)}>
               {item.label}
             </Link>
           ))}
-          <div className="flex gap-3 pt-2">
-            <Link href="/login" className="btn-secondary text-sm px-4 py-2 rounded-lg flex-1 text-center">Sign in</Link>
-            <Link href="/signup" className="btn-primary text-sm px-4 py-2 rounded-lg flex-1 text-center">Get started</Link>
+          <div className="flex gap-3 pt-2 border-t border-[#222]">
+            <Link href="/login" className="rounded-full border border-neutral-500 text-neutral-300 text-sm px-4 py-2 flex-1 text-center hover:bg-neutral-800/50 hover:text-white hover:border-neutral-400 transition-colors cursor-pointer">Sign in</Link>
+            <Link href="/signup" className="rounded-full border border-neutral-500 text-neutral-800 bg-neutral-50 text-sm px-4 py-2 flex-1 text-center hover:bg-neutral-200 transition-colors cursor-pointer">Get started</Link>
           </div>
         </div>
       )}

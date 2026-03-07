@@ -91,7 +91,7 @@ export default function DemoSection() {
         </div>
 
         {/* Bottom Stats / Outline Area */}
-        <div className="grid md:grid-cols-3 gap-6 mb-24 hidden sm:grid">
+        <div className="hidden sm:grid md:grid-cols-3 gap-6 mb-24">
           {[
             { value: '< 2ms', label: 'avg inspection latency' },
             { value: '100%', label: 'open-source & privacy-first' },
