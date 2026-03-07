@@ -45,11 +45,11 @@ input.value=""
 
 async function loadEvents(){
 
-const res = await fetch("http://127.0.0.1:8000/events",{
-headers:{
-"X-Wren-Key":API_KEY
-}
-})
+const res = await fetch("http://localhost:8000/events", {
+  headers: {
+    "X-Wren-Key": "a7f70353d1bbb8e07bb17ed70d8f7babbfce48db5370d21f"
+  }
+});
 
 const data = await res.json()
 

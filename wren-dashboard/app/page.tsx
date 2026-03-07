@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 type Log = {
   timestamp: string;
   module: string;
-  risk: string;
+  severity: string;
   action: string;
   reason: string;
 };
@@ -16,9 +16,13 @@ export default function Dashboard() {
 
   const fetchLogs = async () => {
     try {
-      const res = await fetch("http://localhost:8000/events");
+      const res = await fetch("http://localhost:8000/events", {
+        headers: {
+          "X-Wren-Key": "a7f70353d1bbb8e07bb17ed70d8f7babbfce48db5370d21f"
+        }
+      });
       const data = await res.json();
-      setLogs(data.logs || []);
+      setLogs(data.events || []);
     } catch (err) {
       console.error("Failed to fetch logs");
     }
@@ -83,7 +87,7 @@ export default function Dashboard() {
             <tr className="border-b border-gray-800 text-left text-gray-400">
               <th className="py-2">Timestamp</th>
               <th className="py-2">Module</th>
-              <th className="py-2">Risk</th>
+              <th className="py-2">Severity</th>
               <th className="py-2">Action</th>
               <th className="py-2">Reason</th>
             </tr>
@@ -103,14 +107,14 @@ export default function Dashboard() {
                   <td className="py-2 uppercase">{log.module}</td>
                   <td
                     className={`py-2 font-semibold ${
-                      log.risk === "high"
+                      log.severity === "high"
                         ? "text-red-400"
-                        : log.risk === "medium"
+                        : log.severity === "medium"
                         ? "text-yellow-400"
                         : "text-green-400"
                     }`}
                   >
-                    {log.risk}
+                    {log.severity}
                   </td>
                   <td className="py-2">{log.action}</td>
                   <td className="py-2 text-gray-300">{log.reason}</td>

@@ -23,17 +23,40 @@ async def forward_request(request: Request):
 
             decision = advanced_scan(user_input)
 
-            if decision.action == "BLOCK":
-                return JSONResponse(
-                    status_code=403,
-                    content={
-                        "error": "Blocked by Wren",
-                        "reason": decision.reason
-                    }
-                )
+        if decision.action == "BLOCK":
+            log_event({
+                "tenant_id": getattr(request.state, "tenant_id", "default"),
+                "session_id": request.headers.get("X-Session-ID", "unknown"),
+                "request_hash": hashlib.sha256(user_input.encode()).hexdigest(),
+                "ip_address": request.client.host,
+                "module": "advanced_scan",
+                "risk": "high",
+                "action": "blocked",
+                "reason": decision.reason
+            })
 
-            if decision.action == "REDACT":
-                m["content"] = decision.redacted_input
+            return JSONResponse(
+                status_code=403,
+                content={
+                    "error": "Blocked by Wren",
+                    "reason": decision.reason
+                }
+            )
+
+        if decision.action == "REDACT":
+
+            log_event({
+                "tenant_id": getattr(request.state, "tenant_id", "default"),
+                "session_id": request.headers.get("X-Session-ID", "unknown"),
+                "request_hash": hashlib.sha256(user_input.encode()).hexdigest(),
+                "ip_address": request.client.host,
+                "module": "advanced_scan",
+                "risk": "medium",
+                "action": "redacted",
+                "reason": decision.reason
+            })
+
+            m["content"] = decision.redacted_input
     tenant_id = getattr(request.state, "tenant_id", "default")
     # -------- INPUT SCAN --------
     scan_result = scan_input(body)
