@@ -7,10 +7,9 @@ from .config import OPENAI_API_KEY, OPENAI_BASE_URL, MOCK_MODE
 from .mock_llm import mock_chat_completion
 from .scanners.input_scanner import scan_input
 from .scanners.output_scanner import scan_output
-from .policy_engine import policy_engine
+from .policy.policy_engine import policy_engine
 from .logger.audit_logger import log_event
 from .security.rate_limiter import check_rate_limit
-from .securitylayer.wren_scanner import scan as advanced_scan
 
 
 async def forward_request(request: Request):
@@ -20,44 +19,10 @@ async def forward_request(request: Request):
     for m in messages:
         if m.get("role") == "user":
             user_input = m.get("content", "")
-
-            decision = advanced_scan(user_input)
-
-        if decision.action == "BLOCK":
-            log_event({
-                "tenant_id": getattr(request.state, "tenant_id", "default"),
-                "session_id": request.headers.get("X-Session-ID", "unknown"),
-                "request_hash": hashlib.sha256(user_input.encode()).hexdigest(),
-                "ip_address": request.client.host,
-                "module": "advanced_scan",
-                "risk": "high",
-                "action": "blocked",
-                "reason": decision.reason
-            })
-
-            return JSONResponse(
-                status_code=403,
-                content={
-                    "error": "Blocked by Wren",
-                    "reason": decision.reason
-                }
-            )
-
-        if decision.action == "REDACT":
-
-            log_event({
-                "tenant_id": getattr(request.state, "tenant_id", "default"),
-                "session_id": request.headers.get("X-Session-ID", "unknown"),
-                "request_hash": hashlib.sha256(user_input.encode()).hexdigest(),
-                "ip_address": request.client.host,
-                "module": "advanced_scan",
-                "risk": "medium",
-                "action": "redacted",
-                "reason": decision.reason
-            })
-
-            m["content"] = decision.redacted_input
+            # Logic moved to consolidated scan_input for better performance
     tenant_id = getattr(request.state, "tenant_id", "default")
+    policy = policy_engine.get(tenant_id)
+
     # -------- INPUT SCAN --------
     scan_result = scan_input(body)
     body = scan_result["modified_body"]
@@ -94,7 +59,6 @@ async def forward_request(request: Request):
             content={"error": "Rate limit exceeded"}
         )
 
-    policy = policy_engine.get()
     # Injection detection
     if scan_result["is_injection"]:
         log_event({
@@ -109,11 +73,14 @@ async def forward_request(request: Request):
         })
 
         if policy.get("input", {}).get("block_on_injection"):
+            ml_result = scan_result.get("ml_result", {})
             return JSONResponse(
                 status_code=403,
                 content={
                     "error": "Blocked by Wren",
-                    "reason": scan_result["reason"]
+                    "reason": scan_result["reason"],
+                    "ml_score": ml_result.get("scores", {}).get("attack", 0.0),
+                    "detection_type": ml_result.get("category", "ATTACK"),
                 }
             )
 
@@ -236,6 +203,14 @@ async def forward_request(request: Request):
                 })
 
                 message["content"] = redacted_content
+
+        # Attach ML scan metadata to response
+        ml_result = scan_result.get("ml_result", {})
+        data["wren_meta"] = {
+            "ml_score": ml_result.get("scores", {}).get("attack", 0.0),
+            "detection_type": ml_result.get("category", "none"),
+            "is_attack": ml_result.get("category") == "ATTACK",
+        }
 
         return JSONResponse(content=data)
 
