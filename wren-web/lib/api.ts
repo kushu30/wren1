@@ -1,54 +1,8 @@
-/**
- * Wren API client
- * All calls to the FastAPI auth backend go through here.
- */
+const API = "http://localhost:9000"
 
-const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001'
-
-export class WrenAPIError extends Error {
-  constructor(public status: number, message: string) {
-    super(message)
-    this.name = 'WrenAPIError'
-  }
-}
-
-async function request<T>(
-  path: string,
-  options: RequestInit = {}
-): Promise<T> {
-  const token = typeof window !== 'undefined' ? localStorage.getItem('wren_token') : null
-
-  const res = await fetch(`${API_BASE}${path}`, {
-    ...options,
-    headers: {
-      'Content-Type': 'application/json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      ...options.headers,
-    },
-  })
-
-  if (!res.ok) {
-    const err = await res.json().catch(() => ({ detail: 'Request failed' }))
-    throw new WrenAPIError(res.status, err.detail || 'Request failed')
-  }
-
-  return res.json()
-}
-
-// ─── Auth ─────────────────────────────────────────────────────────────────────
-
-export interface SignupResponse {
-  user_id: string
+export interface UserInfo {
   email: string
   credits: number
-  api_key: string
-  token: string
-}
-
-export interface LoginResponse {
-  token: string
-  user_id: string
-  email: string
 }
 
 export interface ApiKey {
@@ -58,53 +12,72 @@ export interface ApiKey {
   credits_remaining: number
 }
 
-export interface UserInfo {
-  id: string
-  email: string
-  credits: number
-  created_at: string
+export class WrenAPIError extends Error {
+  status: number
+  constructor(message: string, status: number) {
+    super(message)
+    this.status = status
+  }
+}
+
+async function request(path: string, options: any = {}) {
+  const token = localStorage.getItem("wren_token")
+
+  const res = await fetch(API + path, {
+    headers: {
+      "Content-Type": "application/json",
+      ...(token ? { "x-token": token } : {}),
+      ...(options.headers || {})
+    },
+    ...options
+  })
+
+  const data = await res.json()
+
+  if (!res.ok) {
+    throw new WrenAPIError(data.detail || "API error", res.status)
+  }
+
+  return data
 }
 
 export const api = {
   signup: (email: string, password: string) =>
-    request<SignupResponse>('/auth/signup', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
+    request("/auth/signup", {
+      method: "POST",
+      body: JSON.stringify({ email, password })
     }),
 
   login: (email: string, password: string) =>
-    request<LoginResponse>('/auth/login', {
-      method: 'POST',
-      body: JSON.stringify({ email, password }),
+    request("/auth/login", {
+      method: "POST",
+      body: JSON.stringify({ email, password })
     }),
 
-  me: () => request<UserInfo>('/auth/me'),
+  me: () => request("/auth/me"),
 
-  listApiKeys: () => request<ApiKey[]>('/auth/api-keys'),
+  listApiKeys: () => request("/auth/api-keys"),
 
   generateKey: () =>
-    request<{ api_key: string; id: string; created_at: string }>(
-      '/auth/generate-key',
-      { method: 'POST' }
-    ),
-}
+    request("/auth/generate-key", { method: "POST" }),
 
-// ─── Token helpers ────────────────────────────────────────────────────────────
+  events: () =>
+    request("/auth/events"),
+
+  deleteKey: (keyId: string) =>
+    request(`/auth/delete-key/${keyId}`, { method: "POST" })
+}
 
 export function saveSession(token: string, email: string) {
-  localStorage.setItem('wren_token', token)
-  localStorage.setItem('wren_email', email)
-}
-
-export function clearSession() {
-  localStorage.removeItem('wren_token')
-  localStorage.removeItem('wren_email')
+  localStorage.setItem("wren_token", token)
+  localStorage.setItem("wren_email", email)
 }
 
 export function getToken() {
-  return typeof window !== 'undefined' ? localStorage.getItem('wren_token') : null
+  return localStorage.getItem("wren_token")
 }
 
-export function isLoggedIn() {
-  return !!getToken()
+export function clearSession() {
+  localStorage.removeItem("wren_token")
+  localStorage.removeItem("wren_email")
 }

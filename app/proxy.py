@@ -4,12 +4,34 @@ import hashlib
 from fastapi import Request, Response
 from fastapi.responses import JSONResponse
 from .config import OPENAI_API_KEY, OPENAI_BASE_URL, MOCK_MODE
-from .mock_llm import mock_chat_completion
 from .scanners.input_scanner import scan_input
 from .scanners.output_scanner import scan_output
 from .policy.policy_engine import policy_engine
 from .logger.audit_logger import log_event
 from .security.rate_limiter import check_rate_limit
+from .securitylayer.wren_scanner import scan as advanced_scan
+import requests
+
+AUTH_API = "http://localhost:9000"
+
+async def log_to_dashboard(user_id, module, severity, action, reason):
+    try:
+        print(f"DEBUG: Logging to dashboard: user={user_id}, module={module}, reason={reason}")
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(
+                f"{AUTH_API}/internal/log-event",
+                params={
+                    "user_id": user_id,
+                    "module": module,
+                    "severity": severity,
+                    "action": action,
+                    "reason": reason,
+                },
+                timeout=5.0
+            )
+            print(f"DEBUG: Dashboard log response: {resp.status_code}")
+    except Exception as e:
+        print(f"DEBUG: Dashboard log failed: {e}")
 
 
 async def forward_request(request: Request):
@@ -19,7 +41,46 @@ async def forward_request(request: Request):
     for m in messages:
         if m.get("role") == "user":
             user_input = m.get("content", "")
-            # Logic moved to consolidated scan_input for better performance
+
+            decision = advanced_scan(user_input)
+
+            if decision.action == "BLOCK":
+                tenant_id = getattr(request.state, "tenant_id", "default")
+                log_event({
+                    "tenant_id": tenant_id,
+                    "session_id": request.headers.get("X-Session-ID", "unknown"),
+                    "request_hash": hashlib.sha256(user_input.encode()).hexdigest(),
+                    "ip_address": request.client.host,
+                    "module": "advanced_scan",
+                    "risk": "high",
+                    "action": "blocked",
+                    "reason": decision.reason
+                })
+                
+                await log_to_dashboard(tenant_id, "advanced_scan", "high", "blocked", decision.reason)
+
+                return JSONResponse(
+                    status_code=403,
+                    content={
+                        "error": "Blocked by Wren",
+                        "reason": decision.reason
+                    }
+                )
+
+            if decision.action == "REDACT":
+                log_event({
+                    "tenant_id": getattr(request.state, "tenant_id", "default"),
+                    "session_id": request.headers.get("X-Session-ID", "unknown"),
+                    "request_hash": hashlib.sha256(user_input.encode()).hexdigest(),
+                    "ip_address": request.client.host,
+                    "module": "advanced_scan",
+                    "risk": "medium",
+                    "action": "redacted",
+                    "reason": decision.reason
+                })
+
+                m["content"] = decision.redacted_input
+
     tenant_id = getattr(request.state, "tenant_id", "default")
     policy = policy_engine.get(tenant_id)
 
@@ -53,6 +114,8 @@ async def forward_request(request: Request):
             "action": "blocked",
             "reason": "Rate limit exceeded"
         })
+        
+        await log_to_dashboard(tenant_id, "rate_limit", "high", "blocked", "Rate limit exceeded")
 
         return JSONResponse(
             status_code=429,
@@ -61,6 +124,7 @@ async def forward_request(request: Request):
 
     # Injection detection
     if scan_result["is_injection"]:
+        is_blocked = policy.get("input", {}).get("block_on_injection")
         log_event({
             "tenant_id": tenant_id,
             "session_id": session_id,
@@ -69,10 +133,18 @@ async def forward_request(request: Request):
             "module": "input",
             "risk": "high",
             "reason": scan_result["reason"],
-            "action": "blocked" if policy.get("input", {}).get("block_on_injection") else "allowed"
+            "action": "blocked" if is_blocked else "allowed"
         })
+        
+        await log_to_dashboard(
+            tenant_id, 
+            "input", 
+            "high", 
+            "blocked" if is_blocked else "allowed", 
+            scan_result["reason"]
+        )
 
-        if policy.get("input", {}).get("block_on_injection"):
+        if is_blocked:
             ml_result = scan_result.get("ml_result", {})
             return JSONResponse(
                 status_code=403,
@@ -123,6 +195,8 @@ async def forward_request(request: Request):
                     "reason": reason,
                     "action": "blocked"
                 })
+                
+                await log_to_dashboard(tenant_id, "rag", "high", "blocked", reason)
 
                 return JSONResponse(
                     status_code=403,
@@ -166,6 +240,8 @@ async def forward_request(request: Request):
                         "reason": f"Unauthorized tool call attempted: {tool_name}",
                         "action": "blocked"
                     })
+                    
+                    await log_to_dashboard(tenant_id, "tool", "high", "blocked", f"Unauthorized tool call: {tool_name}")
 
                     return JSONResponse(
                         status_code=403,

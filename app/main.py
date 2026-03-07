@@ -9,6 +9,9 @@ from app.config import WREN_API_KEYS
 from app.proxy import forward_request
 from app.rag.registry import register_chunk
 import secrets
+import httpx
+
+AUTH_API = "http://localhost:9000"
 
 
 app = FastAPI()
@@ -31,16 +34,31 @@ async def validate_wren_key(x_wren_key: str = Header(None)):
     if not x_wren_key:
         raise HTTPException(status_code=401, detail="Unauthorized")
 
-    db = SessionLocal()
-
-    api_key = db.query(APIKey).filter(APIKey.key == x_wren_key).first()
-
-    db.close()
-
-    if not api_key:
+    try:
+        async with httpx.AsyncClient() as client:
+            resp = await client.post(
+                f"{AUTH_API}/internal/verify-key",
+                headers={"x-wren-key": x_wren_key},
+                timeout=5.0
+            )
+        
+        if resp.status_code != 200:
+            print(f"DEBUG: Key verification failed with status {resp.status_code}")
+            raise HTTPException(status_code=401, detail="Unauthorized")
+            
+        data = resp.json()
+        
+        # Return a mock object that has a tenant_id property to maintain compatibility
+        class MockKey:
+            def __init__(self, tenant_id):
+                self.tenant_id = tenant_id
+        
+        return MockKey(data["tenant_id"])
+    except Exception as e:
+        print(f"DEBUG: Key validation error: {e}")
+        if isinstance(e, HTTPException):
+            raise e
         raise HTTPException(status_code=401, detail="Unauthorized")
-
-    return api_key
 
 
 # -------- HEALTH --------
@@ -51,7 +69,7 @@ async def health():
 
 # -------- EVENTS --------
 @app.get("/events")
-def get_events(api_key = Depends(validate_wren_key)):
+async def get_events(api_key = Depends(validate_wren_key)):
     db = SessionLocal()
 
     events = (
@@ -81,7 +99,7 @@ def get_events(api_key = Depends(validate_wren_key)):
 
 
 @app.post("/admin/create-key")
-def create_api_key(tenant_id: str):
+async def create_api_key(tenant_id: str):
     db = SessionLocal()
 
     new_key = secrets.token_hex(24)
@@ -103,7 +121,8 @@ def create_api_key(tenant_id: str):
 
 # -------- PROXY --------
 @app.api_route("/{full_path:path}", methods=["GET", "POST", "PUT", "DELETE"])
-async def proxy(full_path: str, request: Request):
+async def proxy(full_path: str, request: Request, api_key = Depends(validate_wren_key)):
+    request.state.tenant_id = api_key.tenant_id
     return await forward_request(request)
 
 

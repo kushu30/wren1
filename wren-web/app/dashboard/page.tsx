@@ -13,6 +13,7 @@ export default function DashboardPage() {
   const [generatingKey, setGeneratingKey] = useState(false)
   const [copiedId, setCopiedId] = useState<string | null>(null)
   const [error, setError] = useState('')
+  const [events, setEvents] = useState<any[]>([])
 
   useEffect(() => {
     if (!getToken()) {
@@ -24,9 +25,14 @@ export default function DashboardPage() {
 
   async function loadData() {
     try {
-      const [userInfo, apiKeys] = await Promise.all([api.me(), api.listApiKeys()])
+      const [userInfo, apiKeys, attackEvents] = await Promise.all([
+        api.me(),
+        api.listApiKeys(),
+        api.events()
+      ])
       setUser(userInfo)
       setKeys(apiKeys)
+      setEvents(attackEvents)
     } catch (err) {
       if (err instanceof WrenAPIError && err.status === 401) {
         clearSession()
@@ -41,18 +47,37 @@ export default function DashboardPage() {
 
   async function handleGenerateKey() {
     setGeneratingKey(true)
+    setError('')
     try {
       const res = await api.generateKey()
       setKeys(prev => [{
         id: res.id,
         key: res.api_key,
         created_at: res.created_at,
-        credits_remaining: user?.credits ?? 0,
+        credits_remaining: res.credits || 100,
       }, ...prev])
+      // Refresh user data to show reset credits
+      const userInfo = await api.me()
+      setUser(userInfo)
     } catch (err) {
-      setError('Failed to generate key')
+      if (err instanceof WrenAPIError) {
+        setError(err.message)
+      } else {
+        setError('Failed to generate key')
+      }
     } finally {
       setGeneratingKey(false)
+    }
+  }
+
+  async function handleDeleteKey(id: string) {
+    if (!confirm('Are you sure you want to delete this API key?')) return
+    
+    try {
+      await api.deleteKey(id)
+      setKeys(prev => prev.filter(k => k.id !== id))
+    } catch (err) {
+      setError('Failed to delete API key')
     }
   }
 
@@ -255,7 +280,7 @@ export default function DashboardPage() {
               {/* Column headers */}
               <div style={{
                 display: 'grid',
-                gridTemplateColumns: '1fr 180px 100px',
+                gridTemplateColumns: '1fr 180px 180px',
                 gap: 16, padding: '10px 24px',
                 borderBottom: '1px solid rgba(255,255,255,0.04)',
               }}>
@@ -297,20 +322,118 @@ export default function DashboardPage() {
                   }}>
                     {formatDate(k.created_at)}
                   </span>
-                  <button
-                    onClick={() => copyKey(k.id, k.key)}
-                    style={{
-                      background: copiedId === k.id ? 'rgba(63,185,80,0.1)' : 'rgba(255,255,255,0.05)',
-                      border: `1px solid ${copiedId === k.id ? 'rgba(63,185,80,0.3)' : 'rgba(255,255,255,0.08)'}`,
-                      borderRadius: 6, padding: '5px 12px',
-                      color: copiedId === k.id ? '#3FB950' : 'rgba(255,255,255,0.5)',
-                      fontSize: 12, cursor: 'pointer',
-                      fontFamily: 'var(--font-mono)',
-                      transition: 'all 0.2s',
-                    }}
-                  >
-                    {copiedId === k.id ? '✓ copied' : 'copy'}
-                  </button>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: 8
+                  }}>
+                    <button
+                      onClick={() => copyKey(k.id, k.key)}
+                      style={{
+                        background: copiedId === k.id ? 'rgba(63,185,80,0.1)' : 'rgba(255,255,255,0.05)',
+                        border: `1px solid ${copiedId === k.id ? 'rgba(63,185,80,0.3)' : 'rgba(255,255,255,0.08)'}`,
+                        borderRadius: 6, padding: '5px 12px',
+                        color: copiedId === k.id ? '#3FB950' : 'rgba(255,255,255,0.5)',
+                        fontSize: 12, cursor: 'pointer',
+                        fontFamily: 'var(--font-mono)',
+                        transition: 'all 0.2s',
+                        whiteSpace: 'nowrap',
+                      }}
+                    >
+                      {copiedId === k.id ? '✓ copied' : 'copy'}
+                    </button>
+                    <button
+                      onClick={() => handleDeleteKey(k.id)}
+                      style={{
+                        background: 'rgba(248,81,73,0.05)',
+                        border: '1px solid rgba(248,81,73,0.15)',
+                        borderRadius: 6, padding: '5px 12px',
+                        color: '#F87171',
+                        fontSize: 12, cursor: 'pointer',
+                        fontFamily: 'var(--font-mono)',
+                        transition: 'all 0.2s',
+                        whiteSpace: 'nowrap',
+                      }}
+                      onMouseEnter={e => {
+                        (e.target as HTMLElement).style.background = 'rgba(248,81,73,0.1)'
+                        ;(e.target as HTMLElement).style.borderColor = 'rgba(248,81,73,0.3)'
+                      }}
+                      onMouseLeave={e => {
+                        (e.target as HTMLElement).style.background = 'rgba(248,81,73,0.05)'
+                        ;(e.target as HTMLElement).style.borderColor = 'rgba(248,81,73,0.15)'
+                      }}
+                    >
+                      delete
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* Security Events Section */}
+        <div style={{
+          background: '#0D1117',
+          border: '1px solid rgba(255,255,255,0.07)',
+          borderRadius: 16,
+          padding: '24px',
+          marginTop: 24,
+          marginBottom: 24,
+        }}>
+          <div style={{
+            fontFamily: 'var(--font-display)',
+            fontWeight: 600,
+            fontSize: 16,
+            marginBottom: 16
+          }}>
+            Security Events
+          </div>
+
+          {events.length === 0 ? (
+            <div style={{
+              color: 'rgba(255,255,255,0.3)',
+              fontSize: 13,
+              fontFamily: 'var(--font-mono)'
+            }}>
+              No attacks detected yet.
+            </div>
+          ) : (
+            <div>
+              {events.map((e, i) => (
+                <div key={i} style={{
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  padding: '12px 0',
+                  borderBottom: i === events.length - 1 ? 'none' : '1px solid rgba(255,255,255,0.05)',
+                  alignItems: 'center',
+                }}>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: 4 }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                      <span style={{
+                        fontSize: 10,
+                        fontFamily: 'var(--font-mono)',
+                        padding: '2px 6px',
+                        borderRadius: 4,
+                        background: 'rgba(255,255,255,0.05)',
+                        color: 'rgba(255,255,255,0.4)',
+                        textTransform: 'uppercase'
+                      }}>{e.module}</span>
+                      <span style={{
+                        fontSize: 11,
+                        fontWeight: 600,
+                        color: e.severity === 'high' ? '#FF7B72' : e.severity === 'medium' ? '#F59E0B' : '#3FB950'
+                      }}>{e.severity.toUpperCase()}</span>
+                    </div>
+                    <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.7)' }}>{e.reason}</span>
+                  </div>
+                  <div style={{
+                    fontSize: 12,
+                    color: 'rgba(255,255,255,0.3)',
+                    fontFamily: 'var(--font-mono)'
+                  }}>
+                    {e.timestamp ? new Date(e.timestamp).toLocaleTimeString() : 'Just now'}
+                  </div>
                 </div>
               ))}
             </div>
