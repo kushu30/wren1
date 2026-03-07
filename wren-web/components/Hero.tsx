@@ -30,157 +30,124 @@ export default function Hero() {
   }, [])
 
   return (
-    <section className="relative min-h-screen flex flex-col justify-center pt-16 overflow-hidden">
-      {/* Grid background */}
-      <div className="absolute inset-0 grid-bg opacity-60" />
-
-      {/* Radial glow behind hero */}
-      <div
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[700px] rounded-full"
-        style={{
-          background: 'radial-gradient(circle, rgba(245,158,11,0.08) 0%, transparent 70%)',
-          pointerEvents: 'none',
-        }}
-      />
-
-      <div className="relative max-w-7xl mx-auto px-6 py-24 lg:py-32">
-        <div className="grid lg:grid-cols-2 gap-16 items-center">
-          {/* Left: Copy */}
-          <div>
-            {/* Badge */}
-            <div
-              className="inline-flex items-center gap-2 mb-8 px-3 py-1.5 rounded-full border border-amber-500/30 bg-amber-500/5 opacity-0-init animate-fade-up"
-              style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
-            >
-              <span className="w-1.5 h-1.5 rounded-full bg-amber-500 shield-pulse" />
-              <span className="font-mono text-xs text-amber-500 tracking-wider">AI SECURITY GATEWAY</span>
-            </div>
-
-            {/* Headline */}
-            <h1
-              className="text-5xl lg:text-6xl xl:text-7xl font-display font-800 leading-[0.95] tracking-tight mb-6 opacity-0-init animate-fade-up"
-              style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
-            >
-              Stop attacks
-              <br />
-              <span className="text-amber-500 amber-text-glow">before they</span>
-              <br />
-              reach your LLM.
-            </h1>
-
-            {/* Subheading */}
-            <p
-              className="text-white/55 text-lg leading-relaxed max-w-xl mb-10 font-body font-300 opacity-0-init animate-fade-up"
-              style={{ animationDelay: '0.35s', animationFillMode: 'forwards' }}
-            >
-              Wren sits between your app and any LLM — blocking prompt injections,
-              redacting PII, enforcing policies, and logging every threat in real time.
-            </p>
-
-            {/* CTAs */}
-            <div
-              className="flex flex-wrap gap-3 mb-12 opacity-0-init animate-fade-up"
-              style={{ animationDelay: '0.5s', animationFillMode: 'forwards' }}
-            >
-              <Link href="/signup" className="btn-primary px-6 py-3 rounded-xl text-sm">
-                Get started free →
-              </Link>
-              <Link href="#how-it-works" className="btn-secondary px-6 py-3 rounded-xl text-sm">
-                See how it works
-              </Link>
-            </div>
-
-            {/* Install snippet */}
-            <div
-              className="opacity-0-init animate-fade-up"
-              style={{ animationDelay: '0.65s', animationFillMode: 'forwards' }}
-            >
-              <p className="text-white/30 text-xs font-mono mb-2 tracking-wider">QUICK INSTALL</p>
-              <div className="code-block inline-block">
-                <div className="flex items-center gap-3 px-4 py-2.5">
-                  <span className="text-white/30 font-mono text-sm">$</span>
-                  <span className="font-mono text-sm text-amber-400">pip install wren-gateway</span>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right: Live log mockup */}
-          <div
-            className="opacity-0-init animate-fade-up"
-            style={{ animationDelay: '0.4s', animationFillMode: 'forwards' }}
+    <section className="relative min-h-screen flex flex-col pt-32 lg:pt-40 pb-0 overflow-hidden px-6">
+      <div className="relative max-w-7xl mx-auto w-full flex flex-col flex-1">
+        {/* Top: Copy */}
+        <div className="flex flex-col items-start mb-16">
+          <h1
+            className="text-3xl font-medium leading-[1.1] tracking-tight mb-8 text-white w-full max-w-[800px] opacity-0-init animate-fade-up"
+            style={{ animationDelay: '0.1s', animationFillMode: 'forwards' }}
           >
-            <div className="gradient-border animate-float">
-              <div className="rounded-xl overflow-hidden border border-white/6 bg-[#0D1117]">
+            Built to make your LLMs extraordinarily secure,
+            <br className="hidden md:block" />
+            Wren is the best way to protect your AI apps.
+          </h1>
+
+          <Link
+            href="/signup"
+            className="bg-white text-black px-5 py-2.5 rounded-full font-medium text-[14px] flex items-center gap-2 hover:bg-neutral-200 transition-colors opacity-0-init animate-fade-up"
+            style={{ animationDelay: '0.2s', animationFillMode: 'forwards' }}
+          >
+            Get started free
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M12 5v14M19 12l-7 7-7-7"/>
+            </svg>
+          </Link>
+        </div>
+
+        {/* Bottom: Live log mockup */}
+        <div
+          className="w-full opacity-0-init animate-fade-up overflow-hidden border-t border-l border-r border-[#ffffff20] rounded-xl"
+          style={{ animationDelay: '0.3s', animationFillMode: 'forwards' }}
+        >
+          {/* Painting / container background */}
+          <div className="w-full bg-[#E5E0D8] pt-12 sm:pt-16 pb-0 px-4 sm:px-12 md:px-20 relative flex flex-col items-center min-h-[500px]">
+            {/* Painting-like background via CSS */}
+            <div 
+              className="absolute inset-0 opacity-[0.85] mix-blend-multiply" 
+              style={{
+                backgroundImage: 'url("https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?q=80&w=1019&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D")',
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+                filter: 'saturate(0.6) contrast(1.1)'
+              }}
+            />
+            <div 
+              className="absolute inset-0"
+              style={{
+                background: 'radial-gradient(ellipse at top, rgba(255,255,255,0.2) 0%, transparent 100%)'
+              }}
+            />
+            
+            <div className="relative z-10 w-full max-w-[900px] shadow-2xl rounded-t-xl overflow-hidden translate-y-4">
+              <div className="overflow-hidden border border-[#ffffff15] bg-[#0A0A0A] w-full rounded-t-xl shadow-[0_0_50px_rgba(0,0,0,0.5)]">
                 {/* Terminal header */}
-                <div className="flex items-center justify-between px-4 py-3 bg-[#161B22] border-b border-white/6">
+                <div className="flex items-center justify-between px-4 py-3 bg-[#111111] border-b border-[#ffffff10]">
                   <div className="flex items-center gap-2">
                     <div className="flex gap-1.5">
-                      <div className="w-3 h-3 rounded-full bg-[#F85149]/70" />
-                      <div className="w-3 h-3 rounded-full bg-amber-500/70" />
-                      <div className="w-3 h-3 rounded-full bg-[#3FB950]/70" />
+                      <div className="w-3 h-3 rounded-full bg-[#F85149]" />
+                      <div className="w-3 h-3 rounded-full bg-amber-500" />
+                      <div className="w-3 h-3 rounded-full bg-[#3FB950]" />
                     </div>
-                    <span className="font-mono text-xs text-white/30 ml-2">wren — security monitor</span>
                   </div>
-                  <div className="flex items-center gap-1.5">
-                    <div className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
-                    <span className="font-mono text-xs text-white/30">LIVE</span>
+                  <span className="font-sans text-xs text-[#ffffff50] font-medium absolute left-1/2 -translate-x-1/2">
+                    wren
+                  </span>
+                  <div className="flex items-center gap-3">
+                    <span className="font-mono text-[10px] text-[#ffffff50] hidden sm:inline-block">LIVE</span>
+                    <div className="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse" />
                   </div>
                 </div>
 
                 {/* Column headers */}
-                <div className="px-4 py-2 border-b border-white/4 grid grid-cols-12 gap-2">
-                  <span className="col-span-3 font-mono text-xs text-white/25 uppercase tracking-wider">Type</span>
-                  <span className="col-span-5 font-mono text-xs text-white/25 uppercase tracking-wider">Payload</span>
-                  <span className="col-span-2 font-mono text-xs text-white/25 uppercase tracking-wider">Risk</span>
-                  <span className="col-span-2 font-mono text-xs text-white/25 uppercase tracking-wider">Status</span>
+                <div className="px-5 py-2.5 border-b border-[#ffffff08] grid grid-cols-12 gap-4 bg-[#0A0A0A]">
+                  <span className="col-span-3 font-mono text-[11px] text-[#ffffff40] uppercase tracking-wider">Type</span>
+                  <span className="col-span-4 font-mono text-[11px] text-[#ffffff40] uppercase tracking-wider">Payload</span>
+                  <span className="col-span-3 font-mono text-[11px] text-[#ffffff40] uppercase tracking-wider hidden sm:block">Risk</span>
+                  <span className="col-span-5 sm:col-span-2 font-mono text-[11px] text-[#ffffff40] uppercase tracking-wider text-right">Status</span>
                 </div>
 
                 {/* Log rows */}
-                <div ref={logRef} className="divide-y divide-white/4">
+                <div ref={logRef} className="divide-y divide-[#ffffff04] bg-[#0A0A0A]">
                   {ATTACKS.map((attack, i) => (
-                    <div key={i} className="log-entry log-row px-4 py-3 grid grid-cols-12 gap-2 items-center">
-                      <span className="col-span-3 font-mono text-xs text-amber-400/80 truncate">
+                    <div key={i} className="log-entry log-row px-5 py-4 grid grid-cols-12 gap-4 items-center hover:bg-[#ffffff05] transition-colors">
+                      <span className="col-span-3 font-mono text-[13px] text-amber-500/90 truncate">
                         {attack.type}
                       </span>
-                      <span className="col-span-5 font-mono text-xs text-white/40 truncate">
+                      <span className="col-span-4 font-mono text-[13px] text-[#ffffff60] truncate">
                         {attack.payload}
                       </span>
-                      <div className="col-span-2 flex items-center gap-1">
-                        <div
-                          className="h-1 rounded-full bg-red-500/80"
-                          style={{ width: `${attack.risk * 100}%`, minWidth: 4 }}
-                        />
-                        <span className="font-mono text-xs text-white/40">{Math.round(attack.risk * 100)}</span>
+                      <div className="col-span-3 items-center justify-start gap-2 hidden sm:flex">
+                        <div className="w-16 h-1 bg-[#ffffff10] rounded-full overflow-hidden">
+                          <div 
+                            className="h-full bg-amber-500/80 rounded-full" 
+                            style={{ width: `${attack.risk * 100}%` }}
+                          />
+                        </div>
+                        <span className="font-mono text-[13px] text-[#ffffff50]">{Math.round(attack.risk * 100)}</span>
                       </div>
-                      <span
-                        className={`col-span-2 font-mono text-xs px-1.5 py-0.5 rounded text-center ${
-                          attack.status === 'BLOCKED'
-                            ? 'bg-red-500/15 text-red-400'
-                            : 'bg-amber-500/15 text-amber-400'
-                        }`}
-                      >
-                        {attack.status}
-                      </span>
+                      <div className="col-span-5 sm:col-span-2 flex justify-end">
+                        <span
+                          className={`font-mono text-[11px] px-2 py-0.5 rounded-sm ${
+                            attack.status === 'BLOCKED'
+                              ? 'bg-red-500/10 text-red-500 border border-red-500/20'
+                              : 'bg-amber-500/10 text-amber-500 border border-amber-500/20'
+                          }`}
+                        >
+                          {attack.status}
+                        </span>
+                      </div>
                     </div>
                   ))}
                 </div>
 
-                {/* Footer */}
-                <div className="px-4 py-2.5 bg-[#161B22] border-t border-white/4 flex items-center justify-between">
-                  <span className="font-mono text-xs text-white/25 cursor">
-                    5 threats detected today
-                  </span>
-                  <span className="font-mono text-xs text-green-400/70">All systems operational</span>
-                </div>
+                {/* Additional height to simulate editor content */}
+                <div className="h-32 bg-[#0A0A0A]"></div>
               </div>
             </div>
           </div>
         </div>
       </div>
-
-      {/* Bottom fade */}
-      <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-[#080A0C] to-transparent pointer-events-none" />
     </section>
   )
 }

@@ -3,10 +3,10 @@ import Link from 'next/link'
 const STEPS = [
   {
     n: '01',
-    title: 'Sign up & get your key',
-    desc: '100 free credits included. No credit card.',
+    title: 'Run your local gateway',
+    desc: 'Self-host the secure proxy in your infrastructure.',
+    badge: { label: 'localhost:8000', type: 'key' },
     code: null,
-    badge: { label: 'wren_sk_ab3f91...', type: 'key' },
   },
   {
     n: '02',
@@ -17,7 +17,7 @@ const STEPS = [
   },
   {
     n: '03',
-    title: 'Route your calls through Wren',
+    title: 'Route calls through Wren',
     desc: 'Replace your LLM client with WrenClient.',
     code: 'client = WrenClient(api_key="wren_sk_...")',
     badge: null,
@@ -26,59 +26,48 @@ const STEPS = [
     n: '04',
     title: 'Watch attacks get blocked',
     desc: 'Dashboard shows every threat in real time.',
-    code: null,
     badge: { label: '← BLOCKED: PROMPT_INJECTION (0.97)', type: 'alert' },
+    code: null,
   },
 ]
 
 export default function DemoSection() {
   return (
-    <section className="relative py-28 border-t border-white/5 overflow-hidden">
-      {/* Grid bg */}
-      <div className="absolute inset-0 grid-bg opacity-30" />
-
-      <div className="relative max-w-7xl mx-auto px-6">
-        {/* Header */}
-        <div className="text-center mb-16 max-w-2xl mx-auto">
-          <p className="section-label mb-4">GET STARTED IN MINUTES</p>
-          <h2 className="text-4xl lg:text-5xl font-display font-700 tracking-tight leading-tight mb-4">
-            From zero to<br />
-            <span className="text-amber-500">protected in 4 steps.</span>
+    <section className="relative pt-24 sm:pt-32 bg-[#0A0A09] border-t border-[#1a1a1a]">
+      <div className="max-w-[1280px] mx-auto px-6">
+        
+        {/* Header Section */}
+        <div className="mb-16">
+          <h2 className="text-[28px] sm:text-[34px] leading-[1.2] font-medium text-white mb-2 font-display">
+            Get started in minutes
           </h2>
-          <p className="text-white/45 font-body font-300 text-lg">
-            No infrastructure to manage. No complex config. Just protection.
+          <p className="text-[#999999] text-[20px] leading-[1.4] mb-8 font-body max-w-2xl">
+            From zero to fully protected in 4 steps. No infrastructure to manage. No complex config. Just protection.
           </p>
         </div>
 
-        {/* Steps */}
-        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5 mb-20">
+        {/* Steps Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-24">
           {STEPS.map((step, i) => (
-            <div key={i} className="relative">
-              {/* Step connector */}
-              {i < STEPS.length - 1 && (
-                <div className="hidden lg:block absolute top-10 left-full w-5 flex items-center justify-center z-10" style={{ transform: 'translateX(-50%)' }}>
-                  <div className="w-full h-px bg-gradient-to-r from-amber-500/30 to-transparent" />
+            <div key={i} className="bg-[#121110] border border-[#222] rounded-xl hover:border-[#333] transition-colors flex flex-col h-full min-h-[220px]">
+              <div className="p-5 flex flex-col h-full">
+                <div className="text-[#888] text-[15px] font-mono mb-6">
+                  {step.n}
                 </div>
-              )}
-
-              <div className="p-5 rounded-xl bg-[#0D1117] border border-white/6 h-full flex flex-col gap-3">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
-                    <span className="font-mono text-xs text-amber-500 font-medium">{step.n}</span>
-                  </div>
-                </div>
-                <div>
-                  <h3 className="font-display font-600 text-sm mb-1.5">{step.title}</h3>
-                  <p className="text-white/40 text-xs font-body leading-relaxed">{step.desc}</p>
-                </div>
+                
+                <h3 className="text-[16px] font-medium text-[#EAEAEA] mb-2 font-display">
+                  {step.title}
+                </h3>
+                
+                <p className="text-[#8B8B8B] text-[13px] leading-relaxed mb-6 font-body flex-grow">
+                  {step.desc}
+                </p>
 
                 {step.code && (
                   <div className="mt-auto">
-                    <div className="code-block">
-                      <div className="px-3 py-2 flex items-center gap-2">
-                        <span className="text-white/25 font-mono text-xs">$</span>
-                        <span className="font-mono text-xs text-amber-400 break-all">{step.code}</span>
-                      </div>
+                    <div className="bg-[#1A1A1A] border border-[#333] rounded-md px-3 py-2.5 flex items-center gap-2 overflow-hidden">
+                      <span className="text-[#555] font-mono text-[12px] select-none">$</span>
+                      <span className="font-mono text-[12px] text-[#A3A3A3] truncate">{step.code}</span>
                     </div>
                   </div>
                 )}
@@ -86,12 +75,12 @@ export default function DemoSection() {
                 {step.badge && (
                   <div className="mt-auto">
                     {step.badge.type === 'key' ? (
-                      <div className="px-3 py-2 rounded-lg bg-amber-500/8 border border-amber-500/15">
-                        <span className="font-mono text-xs text-amber-400">{step.badge.label}</span>
+                      <div className="bg-[#1A1A1A] border border-[#333] rounded-md px-3 py-2.5 flex items-center justify-center">
+                        <span className="font-mono text-[12px] text-[#FF6B2C]">{step.badge.label}</span>
                       </div>
                     ) : (
-                      <div className="px-3 py-2 rounded-lg bg-red-500/8 border border-red-500/15">
-                        <span className="font-mono text-xs text-red-400">{step.badge.label}</span>
+                      <div className="bg-[#3A1414] border border-[#5A1414] rounded-md px-3 py-2.5 flex items-center justify-center">
+                        <span className="font-mono text-[12px] text-[#F85149]">{step.badge.label}</span>
                       </div>
                     )}
                   </div>
@@ -101,51 +90,40 @@ export default function DemoSection() {
           ))}
         </div>
 
-        {/* Stats strip */}
-        <div className="grid grid-cols-3 gap-5 mb-20">
+        {/* Bottom Stats / Outline Area */}
+        <div className="grid md:grid-cols-3 gap-6 mb-24 hidden sm:grid">
           {[
-            { value: '< 2ms', label: 'Avg inspection latency' },
-            { value: '100', label: 'Free credits on signup' },
-            { value: '6', label: 'Security protection layers' },
+            { value: '< 2ms', label: 'avg inspection latency' },
+            { value: '100%', label: 'open-source & privacy-first' },
+            { value: '6', label: 'security protection layers' },
           ].map((stat, i) => (
-            <div key={i} className="p-6 rounded-xl border border-white/6 bg-[#0D1117] text-center">
-              <div className="text-3xl lg:text-4xl font-display font-800 text-amber-500 amber-text-glow mb-2">
-                {stat.value}
-              </div>
-              <div className="text-white/40 text-sm font-body">{stat.label}</div>
+            <div key={i} className="border-t border-[#333] pt-6 group">
+               <div className="text-[28px] font-medium text-[#EAEAEA] mb-1 font-display group-hover:text-white transition-colors">
+                 {stat.value}
+               </div>
+               <div className="text-[#888] text-[14px]">
+                 {stat.label}
+               </div>
             </div>
           ))}
         </div>
-
-        {/* CTA block */}
-        <div className="relative rounded-2xl overflow-hidden">
-          <div className="absolute inset-0 bg-amber-500/5 border border-amber-500/20 rounded-2xl" />
-          <div
-            className="absolute inset-0 rounded-2xl"
-            style={{
-              background: 'radial-gradient(circle at 30% 50%, rgba(245,158,11,0.08) 0%, transparent 60%)',
-            }}
-          />
-          <div className="relative px-8 lg:px-16 py-14 flex flex-col lg:flex-row items-center justify-between gap-8">
-            <div>
-              <h2 className="text-3xl lg:text-4xl font-display font-700 tracking-tight mb-3">
-                Start protecting your AI today.
-              </h2>
-              <p className="text-white/50 font-body font-300 text-lg">
-                Free to start. No credit card. 100 credits included.
-              </p>
-            </div>
-            <div className="flex flex-col sm:flex-row gap-3 flex-shrink-0">
-              <Link href="/signup" className="btn-primary px-8 py-3.5 rounded-xl text-sm whitespace-nowrap">
-                Create free account →
-              </Link>
-              <Link href="#" className="btn-secondary px-8 py-3.5 rounded-xl text-sm whitespace-nowrap">
-                Read the docs
-              </Link>
-            </div>
-          </div>
+</div>
+        {/* New CTA block designed like the reference image */}
+        <div className="bg-[#14120B] py-24 sm:py-32 flex flex-col items-center justify-center border-t border-[#1a1a1a]">
+           <h2 className="text-[36px] sm:text-[44px] leading-[1.1] font-medium text-[#EAEAEA] mb-6 font-display tracking-tight">
+              Try Wren now.
+           </h2>
+           
+           <Link 
+              href="https://github.com" 
+              className="bg-[#EAEAEA] text-black px-5 py-2.5 rounded-full font-medium text-[13px] flex items-center gap-2 hover:bg-white transition-colors"
+           >
+              View on GitHub
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 5v14M19 12l-7 7-7-7"/></svg>
+           </Link>
         </div>
-      </div>
+
+      
     </section>
   )
 }

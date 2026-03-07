@@ -2,34 +2,21 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
+import Image from 'next/image'
 
 export default function Navbar() {
   const [open, setOpen] = useState(false)
 
   return (
-    <nav className="nav-blur fixed top-0 left-0 right-0 z-50">
-      <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
+    <nav className="bg-[#14120B] fixed top-0 left-0 right-0 z-50">
+      <div className="max-w-7xl mx-auto h-12 flex items-center justify-between">
         {/* Logo */}
         <Link href="/" className="flex items-center gap-2.5 group">
           <div className="w-7 h-7 relative">
-            <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path
-                d="M14 2L4 7V14C4 19.5 8.5 24.7 14 26C19.5 24.7 24 19.5 24 14V7L14 2Z"
-                stroke="#F59E0B"
-                strokeWidth="1.5"
-                strokeLinejoin="round"
-              />
-              <path
-                d="M10 14L13 17L18 11"
-                stroke="#F59E0B"
-                strokeWidth="1.5"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+            <Image src="/logo.png" alt="Logo" width={28} height={28} />
           </div>
-          <span className="font-display font-700 text-lg tracking-tight">
-            wren<span className="text-amber-500">.</span>
+          <span className="font-display font-700 text-lg tracking-tight font-medium">
+            wren
           </span>
         </Link>
 
@@ -43,7 +30,7 @@ export default function Navbar() {
             <Link
               key={item.label}
               href={item.href}
-              className="text-sm text-white/60 hover:text-white transition-colors font-body"
+              className="text-sm text-white hover:text-white transition-colors text-medium font-body"
             >
               {item.label}
             </Link>
@@ -54,13 +41,13 @@ export default function Navbar() {
         <div className="hidden md:flex items-center gap-3">
           <Link
             href="/login"
-            className="btn-secondary text-sm px-4 py-2 rounded-lg"
+            className="rounded-full border border-neutral-500 text-sm px-3 py-0.5"
           >
             Sign in
           </Link>
           <Link
             href="/signup"
-            className="btn-primary text-sm px-4 py-2 rounded-lg"
+            className="rounded-full border border-neutral-500 text-neutral-800 bg-neutral-50 text-sm px-3 py-0.5"
           >
             Get started
           </Link>

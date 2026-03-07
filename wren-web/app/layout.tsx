@@ -1,17 +1,11 @@
 import type { Metadata } from 'next'
-import { Syne, DM_Sans, JetBrains_Mono } from 'next/font/google'
+import { JetBrains_Mono, Inter } from 'next/font/google'
 import './globals.css'
 
-const syne = Syne({
+const inter = Inter({
   subsets: ['latin'],
-  variable: '--font-syne',
-  weight: ['400', '600', '700', '800'],
-})
-
-const dmSans = DM_Sans({
-  subsets: ['latin'],
-  variable: '--font-dm-sans',
-  weight: ['300', '400', '500'],
+  variable: '--font-inter',
+  weight: ['400', '500', '600', '700', '800'],
 })
 
 const jetbrainsMono = JetBrains_Mono({
@@ -32,8 +26,8 @@ export default function RootLayout({
   children: React.ReactNode
 }) {
   return (
-    <html lang="en" className={`${syne.variable} ${dmSans.variable} ${jetbrainsMono.variable}`}>
-      <body className="bg-[#080A0C] text-white antialiased">
+    <html lang="en" className={`${inter.variable} ${jetbrainsMono.variable}`}>
+      <body className="bg-[#14120B] text-white antialiased">
         {children}
       </body>
     </html>

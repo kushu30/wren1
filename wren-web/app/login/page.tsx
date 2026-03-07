@@ -2,6 +2,7 @@
 
 import { useState } from 'react'
 import Link from 'next/link'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { api, saveSession, WrenAPIError } from '@/lib/api'
 
@@ -16,6 +17,13 @@ export default function LoginPage() {
     e.preventDefault()
     setError('')
     setLoading(true)
+
+    // Frontend demo bypass
+    if (email === 'demo@wren.dev' && password === 'demo1234') {
+      saveSession('demo_token', email)
+      router.push('/dashboard')
+      return
+    }
 
     try {
       const res = await api.login(email, password)
@@ -33,61 +41,36 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center px-4" style={{ background: '#080A0C' }}>
-      {/* Grid bg */}
-      <div style={{
-        position: 'fixed', inset: 0, pointerEvents: 'none',
-        backgroundImage: 'linear-gradient(rgba(245,158,11,0.04) 1px,transparent 1px),linear-gradient(90deg,rgba(245,158,11,0.04) 1px,transparent 1px)',
-        backgroundSize: '60px 60px',
-      }} />
-
-      <div style={{ maxWidth: 440, width: '100%', position: 'relative' }}>
+    <div className="min-h-screen flex items-center justify-center px-4 bg-[#14120B]">
+      <div className="max-w-[400px] w-full relative z-10">
+        
         {/* Logo */}
-        <div className="flex items-center gap-2.5 mb-10 justify-center">
-          <ShieldIcon />
-          <span className="font-display font-700 text-lg tracking-tight">
-            wren<span style={{ color: '#F59E0B' }}>.</span>
+        <Link href="/" className="flex items-center gap-2.5 mb-10 justify-center group hover:opacity-80 transition-opacity">
+          <Image src="/logo.png" width={24} height={24} alt="Wren Logo" className="object-contain" />
+          <span className="font-display font-medium text-[20px] tracking-tight text-[#EAEAEA]">
+            wren
           </span>
-        </div>
+        </Link>
 
-        <div style={{
-          background: '#0D1117',
-          border: '1px solid rgba(255,255,255,0.07)',
-          borderRadius: 16,
-          padding: '32px',
-        }}>
-          <h1 className="font-display" style={{
-            fontSize: 24, fontWeight: 700, marginBottom: 6, letterSpacing: '-0.02em',
-          }}>
+        {/* Login Box */}
+        <div className="bg-[#0A0A09] border border-[#222] rounded-2xl p-8 sm:p-10 shadow-2xl">
+          <h1 className="font-display text-[26px] font-medium text-[#EAEAEA] mb-2 tracking-tight">
             Welcome back
           </h1>
-          <p style={{ color: 'rgba(255,255,255,0.4)', fontSize: 14, marginBottom: 28 }}>
+          <p className="text-[#888] text-[14px] mb-8 font-body">
             Sign in to access your API keys and dashboard.
           </p>
 
           {error && (
-            <div style={{
-              background: 'rgba(248,81,73,0.08)',
-              border: '1px solid rgba(248,81,73,0.2)',
-              borderRadius: 8,
-              padding: '10px 14px',
-              marginBottom: 20,
-              fontSize: 13,
-              color: '#F87171',
-              fontFamily: 'var(--font-mono)',
-            }}>
+            <div className="bg-[#3A1414] border border-[#5A1414] rounded-lg p-3 mb-6 text-[13px] text-[#F85149] font-mono">
               {error}
             </div>
           )}
 
-          <form onSubmit={handleSubmit}>
-            <div style={{ marginBottom: 16 }}>
-              <label style={{
-                display: 'block', fontSize: 12,
-                color: 'rgba(255,255,255,0.4)', marginBottom: 6,
-                fontFamily: 'var(--font-mono)', letterSpacing: '0.08em',
-              }}>
-                EMAIL
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            <div>
+              <label className="block text-[11px] text-[#888] mb-2 font-mono tracking-widest uppercase">
+                Email
               </label>
               <input
                 type="email"
@@ -95,25 +78,14 @@ export default function LoginPage() {
                 value={email}
                 onChange={e => setEmail(e.target.value)}
                 placeholder="you@example.com"
-                style={{
-                  width: '100%', background: '#161B22',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: 8, padding: '11px 14px',
-                  color: '#fff', fontSize: 14, outline: 'none',
-                  transition: 'border-color 0.2s', fontFamily: 'inherit',
-                }}
-                onFocus={e => e.target.style.borderColor = 'rgba(245,158,11,0.5)'}
-                onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+                className="w-full bg-[#161616] border border-[#333] rounded-lg px-4 py-3 text-[#EAEAEA] text-[14px] placeholder:text-[#555] focus:outline-none focus:border-[#666] transition-colors font-body"
               />
             </div>
 
-            <div style={{ marginBottom: 24 }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 6 }}>
-                <label style={{
-                  fontSize: 12, color: 'rgba(255,255,255,0.4)',
-                  fontFamily: 'var(--font-mono)', letterSpacing: '0.08em',
-                }}>
-                  PASSWORD
+            <div>
+              <div className="flex justify-between mb-2">
+                <label className="block text-[11px] text-[#888] font-mono tracking-widest uppercase">
+                  Password
                 </label>
               </div>
               <input
@@ -121,74 +93,39 @@ export default function LoginPage() {
                 required
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                placeholder="Your password"
-                style={{
-                  width: '100%', background: '#161B22',
-                  border: '1px solid rgba(255,255,255,0.1)',
-                  borderRadius: 8, padding: '11px 14px',
-                  color: '#fff', fontSize: 14, outline: 'none',
-                  transition: 'border-color 0.2s', fontFamily: 'inherit',
-                }}
-                onFocus={e => e.target.style.borderColor = 'rgba(245,158,11,0.5)'}
-                onBlur={e => e.target.style.borderColor = 'rgba(255,255,255,0.1)'}
+                placeholder="••••••••"
+                className="w-full bg-[#161616] border border-[#333] rounded-lg px-4 py-3 text-[#EAEAEA] text-[14px] placeholder:text-[#555] focus:outline-none focus:border-[#666] transition-colors font-body"
               />
             </div>
 
             <button
               type="submit"
               disabled={loading}
-              style={{
-                width: '100%',
-                background: loading ? 'rgba(245,158,11,0.5)' : '#F59E0B',
-                color: '#000',
-                fontFamily: 'var(--font-display)',
-                fontWeight: 700, fontSize: 14,
-                padding: '12px', borderRadius: 10,
-                border: 'none', cursor: loading ? 'not-allowed' : 'pointer',
-                transition: 'all 0.2s',
-              }}
+              className={`w-full mt-2 rounded-full font-medium text-[14px] py-3 flex items-center justify-center transition-all ${
+                loading 
+                  ? 'bg-[#EAEAEA]/50 text-black cursor-not-allowed' 
+                  : 'bg-[#EAEAEA] text-black hover:bg-white'
+              }`}
             >
-              {loading ? 'Signing in…' : 'Sign in →'}
+              {loading ? 'Signing in…' : 'Sign in'}
             </button>
           </form>
 
-          <p style={{
-            marginTop: 20, textAlign: 'center',
-            fontSize: 13, color: 'rgba(255,255,255,0.35)',
-          }}>
+          <p className="mt-8 text-center text-[13px] text-[#888] font-body">
             Don&apos;t have an account?{' '}
-            <Link href="/signup" style={{ color: '#F59E0B', textDecoration: 'none' }}>
+            <Link href="/signup" className="text-[#EAEAEA] hover:underline hover:text-white transition-colors">
               Sign up free
             </Link>
           </p>
         </div>
 
-        {/* Demo credentials hint for hackathon */}
-        <div style={{
-          marginTop: 16, padding: '10px 14px',
-          background: 'rgba(245,158,11,0.05)',
-          border: '1px solid rgba(245,158,11,0.1)',
-          borderRadius: 8, textAlign: 'center',
-        }}>
-          <span style={{
-            fontFamily: 'var(--font-mono)', fontSize: 11,
-            color: 'rgba(255,255,255,0.25)',
-          }}>
+        {/* Demo credentials hint */}
+        <div className="mt-6 p-3 bg-[#121212] border border-[#222] rounded-lg text-center shadow-lg">
+          <span className="font-mono text-[11px] text-[#888]">
             demo: demo@wren.dev / demo1234
           </span>
         </div>
       </div>
     </div>
-  )
-}
-
-function ShieldIcon() {
-  return (
-    <svg width="26" height="26" viewBox="0 0 28 28" fill="none">
-      <path d="M14 2L4 7V14C4 19.5 8.5 24.7 14 26C19.5 24.7 24 19.5 24 14V7L14 2Z"
-        stroke="#F59E0B" strokeWidth="1.5" strokeLinejoin="round"/>
-      <path d="M10 14L13 17L18 11" stroke="#F59E0B" strokeWidth="1.5"
-        strokeLinecap="round" strokeLinejoin="round"/>
-    </svg>
   )
 }
