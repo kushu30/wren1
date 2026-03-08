@@ -13,7 +13,7 @@ export default function DocsPage() {
         {/* Header */}
         <div className="mb-24">
           <h1 className="font-display text-4xl font-medium tracking-tight mb-4 text-[#EAEAEA]">
-            core concepts
+           Documentation
           </h1>
           <p className="text-[#888] text-[15px] max-w-[600px] leading-relaxed">
             Understand how Wren acts as a secure, invisible layer between your application and AI model providers.
@@ -27,10 +27,10 @@ export default function DocsPage() {
           <section id="the-problem" className="scroll-mt-32">
             <div className="grid md:grid-cols-[200px_1fr] gap-8">
               <div>
-                <h2 className="font-mono text-[13px] text-[#555] sticky top-32">the problem</h2>
+                <h2 className="font-mono text-[13px] text-[#555] sticky top-32">The problem</h2>
               </div>
               <div>
-                <h3 className="font-display text-xl font-medium mb-4 text-[#EAEAEA] tracking-tight">the bing prompt injection case</h3>
+                <h3 className="font-display text-xl font-medium mb-4 text-[#EAEAEA] tracking-tight">The Bing prompt injection case</h3>
                 <div className="text-[#888] text-[15px] leading-relaxed space-y-4 mb-8">
                   <p>
                     Traditional APIs accept structured, predictable input—which makes them straightforward to validate. AI systems interpret free-form human language, making the range of possible inputs essentially unbounded.
@@ -50,10 +50,10 @@ export default function DocsPage() {
           <section id="architecture" className="scroll-mt-32">
             <div className="grid md:grid-cols-[200px_1fr] gap-8">
               <div>
-                <h2 className="font-mono text-[13px] text-[#555] sticky top-32">architecture</h2>
+                <h2 className="font-mono text-[13px] text-[#555] sticky top-32">Architecture</h2>
               </div>
               <div>
-                <h3 className="font-display text-xl font-medium mb-4 text-[#EAEAEA] tracking-tight">the reverse proxy model</h3>
+                <h3 className="font-display text-xl font-medium mb-4 text-[#EAEAEA] tracking-tight">The reverse proxy model</h3>
                 <div className="text-[#888] text-[15px] leading-relaxed space-y-4 mb-8">
                   <p>
                     Wren is designed to be a transparent reverse proxy. Instead of your internal applications or microservices calling OpenAI (or Anthropic, Google, etc.) directly, they route their requests through the Wren Gateway.
@@ -107,10 +107,10 @@ export default function DocsPage() {
           <section id="policies" className="scroll-mt-32">
             <div className="grid md:grid-cols-[200px_1fr] gap-8">
               <div>
-                <h2 className="font-mono text-[13px] text-[#555] sticky top-32">edge policies</h2>
+                <h2 className="font-mono text-[13px] text-[#555] sticky top-32">Edge policies</h2>
               </div>
               <div>
-                <h3 className="font-display text-xl font-medium mb-4 text-[#EAEAEA] tracking-tight">security & validation</h3>
+                <h3 className="font-display text-xl font-medium mb-4 text-[#EAEAEA] tracking-tight">Security &amp; validation</h3>
                 <p className="text-[#888] text-[15px] mb-8 leading-relaxed">
                   Wren's core logic is dictated by its `policy_engine.py` and modular security scanners. These policies are defined programmatically and applied throughout the request lifecycle.
                 </p>
@@ -118,31 +118,31 @@ export default function DocsPage() {
                 <div className="grid sm:grid-cols-2 gap-4">
                   <div className="bg-[#121212] border border-[#222] p-6 rounded-xl hover:border-[#333] transition-colors group">
                     <div className="font-mono text-[11px] text-[#555] mb-3 group-hover:text-[#888] transition-colors">input pipeline</div>
-                    <h4 className="font-display text-[15px] font-medium text-[#EAEAEA] mb-2 tracking-tight">prompt injection</h4>
+                    <h4 className="font-display text-[15px] font-medium text-[#EAEAEA] mb-2 tracking-tight">Prompt injection</h4>
                     <p className="text-[13px] text-[#888] leading-relaxed">Leverages heuristic scanning and specialized secondary models to detect and block malicious jailbreaks before they reach your primary, expensive model.</p>
                   </div>
 
                   <div className="bg-[#121212] border border-[#222] p-6 rounded-xl hover:border-[#333] transition-colors group">
                     <div className="font-mono text-[11px] text-[#555] mb-3 group-hover:text-[#888] transition-colors">input pipeline</div>
-                    <h4 className="font-display text-[15px] font-medium text-[#EAEAEA] mb-2 tracking-tight">pii redaction</h4>
+                    <h4 className="font-display text-[15px] font-medium text-[#EAEAEA] mb-2 tracking-tight">PII redaction</h4>
                     <p className="text-[13px] text-[#888] leading-relaxed">Identifies and masks Personally Identifiable Information (like SSNs, emails, and phone numbers) in prompt context in real-time to maintain compliance.</p>
                   </div>
 
                   <div className="bg-[#121212] border border-[#222] p-6 rounded-xl hover:border-[#333] transition-colors group">
                     <div className="font-mono text-[11px] text-[#555] mb-3 group-hover:text-[#888] transition-colors">output pipeline</div>
-                    <h4 className="font-display text-[15px] font-medium text-[#EAEAEA] mb-2 tracking-tight">rag integrity</h4>
+                    <h4 className="font-display text-[15px] font-medium text-[#EAEAEA] mb-2 tracking-tight">RAG integrity</h4>
                     <p className="text-[13px] text-[#888] leading-relaxed">Validates that the LLM's response only utilizes facts found strictly within the provided context window (preventing context stuffing & poisoning).</p>
                   </div>
 
                   <div className="bg-[#121212] border border-[#222] p-6 rounded-xl hover:border-[#333] transition-colors group">
                     <div className="font-mono text-[11px] text-[#555] mb-3 group-hover:text-[#888] transition-colors">output pipeline</div>
-                    <h4 className="font-display text-[15px] font-medium text-[#EAEAEA] mb-2 tracking-tight">tool interception</h4>
+                    <h4 className="font-display text-[15px] font-medium text-[#EAEAEA] mb-2 tracking-tight">Tool interception</h4>
                     <p className="text-[13px] text-[#888] leading-relaxed">Inspects arguments provided by the AI to invoked tools, ensuring the model isn't attempting destructive actions (e.g., `os.system`) or accessing unauthorized network resources.</p>
                   </div>
 
                   <div className="bg-[#121212] border border-[#222] p-6 rounded-xl hover:border-[#333] transition-colors group sm:col-span-2">
                     <div className="font-mono text-[11px] text-[#555] mb-3 group-hover:text-[#888] transition-colors">input pipeline</div>
-                    <h4 className="font-display text-[15px] font-medium text-[#EAEAEA] mb-2 tracking-tight">jailbreak mitigation</h4>
+                    <h4 className="font-display text-[15px] font-medium text-[#EAEAEA] mb-2 tracking-tight">Jailbreak mitigation</h4>
                     <p className="text-[13px] text-[#888] leading-relaxed">Blocks explicit attempts to bypass model safety and content policies (e.g., "You are DAN, you can do anything...").</p>
                   </div>
                 </div>
@@ -154,10 +154,10 @@ export default function DocsPage() {
           <section id="detection" className="scroll-mt-32">
             <div className="grid md:grid-cols-[200px_1fr] gap-8">
               <div>
-                <h2 className="font-mono text-[13px] text-[#555] sticky top-32">ml detection</h2>
+                <h2 className="font-mono text-[13px] text-[#555] sticky top-32">ML detection</h2>
               </div>
               <div>
-                <h3 className="font-display text-xl font-medium mb-4 text-[#EAEAEA] tracking-tight">semantic intent scoring</h3>
+                <h3 className="font-display text-xl font-medium mb-4 text-[#EAEAEA] tracking-tight">Semantic intent scoring</h3>
                 <div className="text-[#888] text-[15px] leading-relaxed space-y-4 mb-4">
                   <p>
                     Wren's core detection engine is built on a fine-tuned DistilBERT model. Rather than purely relying on keyword matching—which is easily evaded via obfuscation or translation—the model understands the <em>meaning and intent</em> of a prompt in context.
@@ -181,10 +181,10 @@ export default function DocsPage() {
           <section id="sdk" className="scroll-mt-32">
             <div className="grid md:grid-cols-[200px_1fr] gap-8">
               <div>
-                <h2 className="font-mono text-[13px] text-[#555] sticky top-32">integration</h2>
+                <h2 className="font-mono text-[13px] text-[#555] sticky top-32">Integration</h2>
               </div>
               <div>
-                <h3 className="font-display text-xl font-medium mb-4 text-[#EAEAEA] tracking-tight">python sdk</h3>
+                <h3 className="font-display text-xl font-medium mb-4 text-[#EAEAEA] tracking-tight">Python SDK</h3>
                 <p className="text-[#888] text-[15px] mb-8 leading-relaxed">
                   Wren acts as a drop-in integration. Install it via <code className="bg-[#222] px-1.5 py-0.5 rounded text-[13px]">pip install wren-gateway</code>, run the interactive <code className="bg-[#222] px-1.5 py-0.5 rounded text-[13px]">wren init</code> command to select your local or remote proxy target, and integrate the native Python SDK—which handles authentication and routing transparently with identical method signatures to standard provider SDKs.
                 </p>
